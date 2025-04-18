@@ -22,6 +22,6 @@ app.prepare().then(() => {
   })
   .listen(8485, '0.0.0.0', err => {
     if (err) throw err
-    console.log('> HTTPS server running at https://0.0.0.0:8485')
+    console.log('> HTTPS server running at https://localhost:8485')
   })
 })
