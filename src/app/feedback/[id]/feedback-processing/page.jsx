@@ -25,7 +25,8 @@ const ProcessingPage = () => {
     const fetchFeedback = async () => {
       try {
         const response = await fetch(
-          `http://10.0.8.209:8381/customer-care/api/feedback/track/${id}/`,
+          // `http://10.0.8.209:8381/customer-care/api/feedback/track/${id}/`,
+          `http://10.0.12.247:85/services/emp/customer-care/api/feedback/track/${id}/`,
          
         );
         if (!response.ok) {
