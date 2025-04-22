@@ -1,5 +1,4 @@
 
-
 "use client";
 import Image from "next/image";
 import Logo from "../../../public/assets/logo.png";
@@ -23,7 +22,7 @@ import { useRouter } from "next/navigation";
 const issueTypes = {
   delivery: {
     title: "Delivery",
-    textPlaceholder: "សរសេរបញ្ហារបស់អ្នកនៅទីនេះ...",
+    textPlaceholder: "សរសេរបញ្ហាការដឹកជញ្ជូននៅទីនេះរបស់អ្នកនៅទីនេះ...",
     hasVoice: true,
   },
   quality: {
@@ -514,7 +513,6 @@ export default function AssueForm() {
       if (issueData.images && issueData.images.length > 0) {
         issueData.images.forEach((image, imgIndex) => {
           formDataToSend.append(`feedback_details[${index}][photos][]`, image);
-          console.log(`Appending image ${imgIndex} for issue ${issueKey}:`, image);
         });
       }
       
