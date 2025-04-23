@@ -95,7 +95,7 @@ function IssueSection({
       };
 
       recorder.onstop = () => {
-        const recordedBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const recordedBlob = new Blob(audioChunks, { type: "audio/aac" });
         if (recordedBlob.size > 0) {
           const url = URL.createObjectURL(recordedBlob);
           setAudioBlob(recordedBlob);
@@ -120,85 +120,9 @@ function IssueSection({
     }
   };
 
-  
+ 
 
-  // const startRecording = async () => {
-  //   try {
-  //     // Check if media devices are supported
-  //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-  //       throw new Error(
-  //         "Media devices are not supported in this browser. Please use a modern browser."
-  //       );
-  //     }
   
-  //     // Check if the context is secure or localhost
-  //     const isLocalhost =
-  //       window.location.hostname === "localhost" ||
-  //       window.location.hostname === "127.0.0.1";
-  //     const isSecureContext = window.isSecureContext || isLocalhost;
-  
-  //     if (!isSecureContext) {
-  //       throw new Error(
-  //         "Voice recording is only available in a secure context (HTTPS) or on localhost. Please access this site using HTTPS."
-  //       );
-  //     }
-  
-  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  //     const recorder = new MediaRecorder(stream);
-  //     const audioChunks = [];
-  
-  //     recorder.ondataavailable = (event) => {
-  //       if (event.data.size > 0) {
-  //         audioChunks.push(event.data);
-  //       }
-  //     };
-  
-  //     recorder.onstop = () => {
-  //       const recordedBlob = new Blob(audioChunks, { type: "audio/webm" });
-  //       if (recordedBlob.size > 0) {
-  //         const url = URL.createObjectURL(recordedBlob);
-  //         setAudioBlob(recordedBlob);
-  //         setAudioURL(url);
-  //         onUpdate(issueKey, {
-  //           description,
-  //           images,
-  //           audioBlob: recordedBlob,
-  //           audioURL: url,
-  //         });
-  //       }
-  //       // Stop all tracks to release the microphone
-  //       stream.getTracks().forEach((track) => track.stop());
-  //     };
-  
-  //     recorder.start();
-  //     setMediaRecorder(recorder);
-  //     setIsRecording(true);
-  
-  //     // Stop recording after 30 seconds
-  //     setTimeout(() => {
-  //       if (recorder.state === "recording") {
-  //         stopRecording();
-  //       }
-  //     }, 30000);
-  //   } catch (error) {
-  //     console.error("Error starting recording:", error);
-  //     if (error.message.includes("secure context")) {
-  //       alert(
-  //         "Voice recording is only available over HTTPS or on localhost. Please access this site using a secure connection (HTTPS) to enable recording."
-  //       );
-  //     } else if (error.name === "NotAllowedError") {
-  //       alert(
-  //         "Microphone access denied. Please allow microphone permissions in your browser settings."
-  //       );
-  //     } else if (error.name === "NotFoundError") {
-  //       alert(
-  //         "No microphone found. Please ensure a microphone is connected and try again."
-  //       );
-  //     } else {
-  //       alert(`Failed to start recording: ${error.message}`);
-  //     }
-  //   }
-  // }
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
@@ -229,16 +153,18 @@ function IssueSection({
     }
   };
 
+
   const handleDownloadAudio = () => {
     if (audioURL) {
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = audioURL;
-      link.download = `${normalizedIssueKey}-recording.webm`;
+      link.download = `${normalizedIssueKey}-recording.aac`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
-  };
+};
+
 
   const handleDeleteImage = (previewURL) => {
     setImagePreviews((prev) => {
