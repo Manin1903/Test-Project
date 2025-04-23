@@ -410,25 +410,111 @@ export default function AssueForm() {
     });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+
+  //   const formDataToSend = new FormData();
+  //   formDataToSend.append("name", formData.name || "");
+  //   formDataToSend.append("phone_number", formData.phone_number);
+  //   formDataToSend.append("address", formData.address);
+
+  //   const issuesArray = Object.entries(formData.issues);
+  //   for (let [index, [issueKey, issueData]] of issuesArray.entries()) {
+  //     const normalizedIssueKey = normalizeIssueKey(issueKey);
+  //     formDataToSend.append(`feedback_details[${index}][feedback_type]`, issueKey);
+  //     if (issueData.description) {
+  //       formDataToSend.append(`feedback_details[${index}][description]`, issueData.description);
+  //     }
+  //     if (issueData.audioBlob) {
+  //       formDataToSend.append(
+  //         `feedback_details[${index}][voice_feedback]`,
+  //         issueData.audioBlob,
+  //         `${normalizedIssueKey}-recording.webm`
+  //       );
+  //     }
+  //     if (issueData.images && issueData.images.length > 0) {
+  //       issueData.images.forEach((image, imgIndex) => {
+  //         formDataToSend.append(`feedback_details[${index}][photos][]`, image);
+  //       });
+  //     }
+      
+  //   }
+
+  //   try {
+  //     const response = await fetch(
+  //       "http://10.0.12.247:85/services/emp/customer-care/api/feedback/submit/",
+  //       {
+  //         method: "POST",
+  //         body: formDataToSend,
+         
+  //       }
+  //     );
+
+  //     const responseData = await response.json();
+  //     const telegram_link = responseData.telegram_link;
+
+  //     if (response.ok) {
+  //       Object.values(formData.issues).forEach((issueData) => {
+  //         if (issueData.audioURL) {
+  //           URL.revokeObjectURL(issueData.audioURL);
+  //         }
+  //       });
+  //       setFormData({ name: "", phone_number: "", address: "", issues: {} });
+  //       setSelectedIssues([]);
+  //       router.push(`/feedback/success-submit?telegram_link=${encodeURIComponent(telegram_link)}`);
+  //     } else {
+  //       console.error("Server error:", responseData);
+  //       alert(`Failed to submit: ${responseData.message || "Unknown error"}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Network error:", error);
+  //     alert("Network error. Check your connection.");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       return;
     }
-
+    const issuesArray = Object.entries(formData.issues);
+    if (issuesArray.length === 0) {
+      alert("Please add at least one issue.");
+      return;
+    }
+  
+    const hasValidIssues = issuesArray.every(([issueKey, issueData]) => {
+      return (
+        issueData.description ||
+        issueData.audioBlob ||
+        (issueData.images && issueData.images.length > 0)
+      );
+    });
+  
+    if (!hasValidIssues) {
+      alert("Each issue must have at least one of: a description, voice recording, or photos.");
+      return;
+    }
+  
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name || "");
     formDataToSend.append("phone_number", formData.phone_number);
     formDataToSend.append("address", formData.address);
-
-    const issuesArray = Object.entries(formData.issues);
+  
+    // Process issues and append to formDataToSend
     for (let [index, [issueKey, issueData]] of issuesArray.entries()) {
       const normalizedIssueKey = normalizeIssueKey(issueKey);
       formDataToSend.append(`feedback_details[${index}][feedback_type]`, issueKey);
-      if (issueData.description) {
-        formDataToSend.append(`feedback_details[${index}][description]`, issueData.description);
-      }
+  
+      // Add a default description if only audioBlob or images are present
+      const description = issueData.description || "Voice recording and Image  submitted";
+      formDataToSend.append(`feedback_details[${index}][description]`, description);
+  
       if (issueData.audioBlob) {
         formDataToSend.append(
           `feedback_details[${index}][voice_feedback]`,
@@ -441,22 +527,24 @@ export default function AssueForm() {
           formDataToSend.append(`feedback_details[${index}][photos][]`, image);
         });
       }
-      
     }
-
+  
+    for (let [key, value] of formDataToSend.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
     try {
       const response = await fetch(
         "http://10.0.12.247:85/services/emp/customer-care/api/feedback/submit/",
         {
           method: "POST",
           body: formDataToSend,
-         
         }
       );
-
+  
       const responseData = await response.json();
       const telegram_link = responseData.telegram_link;
-
+  
       if (response.ok) {
         Object.values(formData.issues).forEach((issueData) => {
           if (issueData.audioURL) {
@@ -467,8 +555,8 @@ export default function AssueForm() {
         setSelectedIssues([]);
         router.push(`/feedback/success-submit?telegram_link=${encodeURIComponent(telegram_link)}`);
       } else {
-        console.error("Server error:", responseData);
-        alert(`Failed to submit: ${responseData.message || "Unknown error"}`);
+        console.error("Server error:", response.status, responseData);
+        alert(`Failed to submit: ${responseData.message || JSON.stringify(responseData)}`);
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -476,7 +564,6 @@ export default function AssueForm() {
     }
   };
 
- 
   
   const handleIssueChange = (value) => {
     if (value && issueTypes[value] && !selectedIssues.includes(value)) {
