@@ -162,12 +162,12 @@ const ProcessingPage = () => {
           </Select>
         </div>
 
-        {/* Display current status */}
+        {/* Display current status
         <div className="mt-4">
           <p className="text-main text-sm font-medium">
             Status: {status.charAt(0).toUpperCase() + status.slice(1)}
           </p>
-        </div>
+        </div> */}
 
         {/* Processing Line Block for Laptop */}
         <div className="hidden lg:block">
