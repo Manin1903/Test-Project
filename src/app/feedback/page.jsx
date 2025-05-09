@@ -535,7 +535,8 @@ export default function AssueForm() {
   
     try {
       const response = await fetch(
-        "http://10.0.12.247:85/services/emp/customer-care/api/feedback/submit/",
+        // "http://10.0.12.247:85/services/emp/customer-care/api/feedback/submit/",
+         "https://sos-dev.onedistribution.shop/api/feedback/submit",
         {
           method: "POST",
           body: formDataToSend,
